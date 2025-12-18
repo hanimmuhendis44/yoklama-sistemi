@@ -3,8 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Yönetim Paneli - Yoklama Sistemi</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Yönetim Paneli - Iğdır Üniversitesi</title>
+    <style>
+        /* TASARIM KISMI */
+        body { font-family: 'Segoe UI', sans-serif; background-color: #f4f6f8; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .card { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 8px 20px rgba(0,0,0,0.1); width: 380px; }
+        select { width: 100%; padding: 12px; margin: 8px 0 20px 0; border: 1px solid #ddd; border-radius: 6px; }
+        label { font-weight: 600; color: #444; font-size: 0.9rem; }
+        .btn-success { width: 100%; padding: 15px; background-color: #28a745; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 1.1rem; font-weight: bold; margin-top: 20px; transition: 0.3s; }
+        .btn-success:hover { background-color: #218838; }
+        .radio-group { display: flex; gap: 10px; margin-top: 5px; }
+        .radio-group input[type="radio"] { display: none; }
+        .radio-box { flex: 1; text-align: center; padding: 10px; background: #f8f9fa; border: 1px solid #ddd; border-radius: 6px; cursor: pointer; font-weight: normal; }
+        .radio-group input:checked + .radio-box { background: #e7f1ff; border-color: #007bff; color: #007bff; font-weight: bold; }
+        .header { display: flex; justify-content: space-between; align-items: center; }
+        .logout-btn { background: none; border: 1px solid #dc3545; color: #dc3545; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 0.8rem; }
+        .footer { margin-top: 25px; text-align: center; font-size: 0.9rem; border-top: 1px solid #eee; padding-top: 15px; }
+        .footer a { color: #6c757d; text-decoration: none; margin: 0 10px; }
+        
+        /* QR KUTUSU STİLİ */
+        #qrKutusu {
+            margin-top: 25px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+            border: 2px dashed #ddd; /* Çerçeve ekledim ki yerini gör */
+            border-radius: 10px;
+            min-height: 160px;
+            background-color: #fafafa;
+        }
+    </style>
 </head>
 <body>
 
@@ -14,9 +43,8 @@
                 <h3>👋 Hoş Geldiniz</h3>
                 <span class="hoca-adi">Sayın Hocam</span>
             </div>
-            <button onclick="cikisYap()" class="logout-btn">Çıkış Yap</button>
+            <button onclick="window.location.href='index.html'" class="logout-btn">Çıkış Yap</button>
         </div>
-
         <hr>
 
         <div class="content">
@@ -41,14 +69,54 @@
             </div>
 
             <button onclick="qrOlustur()" class="btn-success">🔳 QR Kod Oluştur</button>
+            
+            <div id="qrKutusu">
+                <span style="color: #aaa; font-size: 0.8rem;">QR Kod burada görünecek...</span>
+            </div>
         </div>
 
         <div class="footer">
             <a href="#">📂 Öğrenci Listesi Yükle</a>
-            <a href="#">📊 Geçmiş Raporlar</a>
+            <a href="#">📊  Devam Raporu</a>
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+    <script>
+        function qrOlustur() {
+            const ders = document.getElementById("dersSelect").value;
+            const qrKutusu = document.getElementById("qrKutusu");
+
+            // Hata Kontrolü 1: Ders Seçildi mi?
+            if (ders === "") {
+                alert("⚠️ Lütfen önce bir ders seçiniz!");
+                return;
+            }
+
+            // Hata Kontrolü 2: İnternet var mı, kütüphane yüklendi mi?
+            if (typeof QRCode === 'undefined') {
+                alert("❌ HATA: QR Kod kütüphanesi yüklenemedi! İnternet bağlantınızı kontrol edin.");
+                return;
+            }
+
+            // Kutuyu Temizle
+            qrKutusu.innerHTML = "";
+
+            // QR Kodu Oluştur
+            try {
+                new QRCode(qrKutusu, {
+                    text: ders + "-" + Math.random().toString(36).substring(7),
+                    width: 150,
+                    height: 150,
+                    colorDark : "#000000",
+                    colorLight : "#ffffff",
+                    correctLevel : QRCode.CorrectLevel.H
+                });
+            } catch (error) {
+                alert("Bir hata oluştu: " + error.message);
+            }
+        }
+    </script>
 </body>
 </html>
