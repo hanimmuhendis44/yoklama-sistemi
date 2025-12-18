@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yönetim Paneli - Yoklama Sistemi</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="card admin-card">
+        <div class="header">
+            <div class="welcome-text">
+                <h3>👋 Hoş Geldiniz</h3>
+                <span class="hoca-adi">Sayın Hocam</span>
+            </div>
+            <button onclick="cikisYap()" class="logout-btn">Çıkış Yap</button>
+        </div>
+
+        <hr>
+
+        <div class="content">
+            <label for="dersSelect">📌 Yoklama Alınacak Ders:</label>
+            <select id="dersSelect">
+                <option value="">-- Bir Ders Seçiniz --</option>
+                <option value="BIL101">Algoritma ve Programlama</option>
+                <option value="BIL202">Veri Yapıları</option>
+                <option value="BIL305">Web Tasarım</option>
+            </select>
+
+            <label>⏱️ Yoklama Süresi:</label>
+            <div class="radio-group">
+                <input type="radio" id="sure5" name="sure" value="5" checked>
+                <label for="sure5" class="radio-box">5 dk</label>
+
+                <input type="radio" id="sure10" name="sure" value="10">
+                <label for="sure10" class="radio-box">10 dk</label>
+
+                <input type="radio" id="sure15" name="sure" value="15">
+                <label for="sure15" class="radio-box">15 dk</label>
+            </div>
+
+            <button onclick="qrOlustur()" class="btn-success">🔳 QR Kod Oluştur</button>
+        </div>
+
+        <div class="footer">
+            <a href="#">📂 Öğrenci Listesi Yükle</a>
+            <a href="#">📊 Geçmiş Raporlar</a>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
