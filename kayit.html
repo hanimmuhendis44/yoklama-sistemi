@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kayıt Ol - Iğdır Üniversitesi</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="card login-card">
+        <h3 style="text-align: center; color: #333;">📝 Kayıt Ol</h3>
+        <p style="text-align: center; color: #666;">Bilgilerini girerek sisteme kaydol.</p>
+        <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
+
+        <form id="kayitForm">
+            <label>Ad Soyad</label>
+            <input type="text" placeholder="Adınız Soyadınız" required>
+
+            <label>Okul Numarası (Kullanıcı Adı)</label>
+            <input type="text" placeholder="2023..." required>
+            
+            <label>Şifre Belirle</label>
+            <input type="password" placeholder="Yeni şifreniz" required>
+            
+            <button type="submit" class="btn-primary">Kayıt Ol</button>
+        </form>
+
+        <div style="margin-top: 15px; text-align: center;">
+            <a href="index.html" style="color: #666; text-decoration: none; font-size: 0.9rem;">← Giriş Ekranına Dön</a>
+        </div>
+    </div>
+
+    <script>
+        // Basit Kayıt Mesajı
+        document.getElementById("kayitForm").addEventListener("submit", function(e){
+            e.preventDefault();
+            alert("✅ Kayıt Başarılı! Şimdi giriş yapabilirsin.");
+            window.location.href = "index.html"; // Giriş sayfasına geri atar
+        });
+    </script>
+</body>
+</html>

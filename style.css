@@ -15,3 +15,37 @@ label { font-weight: 600; color: #444; font-size: 0.9rem; }
 .footer { margin-top: 25px; text-align: center; font-size: 0.9rem; border-top: 1px solid #eee; padding-top: 15px; }
 .footer a { color: #6c757d; text-decoration: none; margin: 0 10px; }
 .footer a:hover { color: #007bff; }
+/* --- YENİ EKLENEN: ÜYE OL BUTONU STİLİ --- */
+.btn-secondary {
+    display: block; /* Buton gibi davranmasını sağlar */
+    width: 100%;
+    padding: 12px;
+    background-color: #6c757d; /* Gri renk */
+    color: white;
+    text-align: center;
+    border-radius: 6px;
+    text-decoration: none; /* Alt çizgiyi kaldırır */
+    box-sizing: border-box;
+    font-weight: bold;
+    transition: 0.3s;
+}
+.btn-secondary:hover {
+    background-color: #5a6268; /* Üstüne gelince koyulaşır */
+}
+/* --- ÜYE OL BUTONU İÇİN GRİ STİL --- */
+.btn-secondary {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    background-color: #6c757d; /* Gri renk */
+    color: white;
+    text-align: center;
+    border-radius: 6px;
+    text-decoration: none;
+    box-sizing: border-box;
+    font-weight: bold;
+    transition: 0.3s;
+}
+.btn-secondary:hover {
+    background-color: #5a6268;
+}
