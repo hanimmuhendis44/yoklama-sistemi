@@ -4,290 +4,391 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Iğdır Üniversitesi - Yoklama Sistemi</title>
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="https://unpkg.com/html5-qrcode"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
-    /* --- TASARIM: Temiz, Modern ve Mobil Uyumlu --- */
-    body{font-family:'Segoe UI',sans-serif;background:#f0f2f5;display:flex;justify-content:center;align-items:center;min-height:100vh;margin:0}
-    
-    .card{background:#fff;padding:2rem;border-radius:15px;width:380px;max-width:95%;box-shadow:0 10px 25px rgba(0,0,0,.1);display:none;text-align:center;animation:fadeIn 0.4s}
+    body{font-family:'Segoe UI',sans-serif;background:#f4f7f6;display:flex;justify-content:center;align-items:center;min-height:100vh;margin:0}
+    .card{background:#fff;padding:2rem;border-radius:12px;width:600px;max-width:98%;box-shadow:0 8px 30px rgba(0,0,0,0.08);display:none;text-align:center;animation:fadeIn 0.3s}
     @keyframes fadeIn {from{opacity:0;transform:translateY(-10px)} to{opacity:1;transform:translateY(0)}}
-    
     #login-screen{display:block}
-    
-    h2{color:#333;margin-bottom:15px}
-    
-    button,input,select{width:100%;padding:12px;margin:6px 0;border:1px solid #ddd;border-radius:5px;box-sizing:border-box;font-size:14px}
-    button{cursor:pointer;font-weight:bold;transition:0.3s}
-    
-    .btn-primary{background:#0d6efd;color:#fff;border:none} .btn-primary:hover{background:#0b5ed7}
-    .btn-secondary{background:#fff;color:#0d6efd;border:1px solid #0d6efd} .btn-secondary:hover{background:#f0f8ff}
+    h2{color:#2c3e50;margin-bottom:20px}
+    button,input,select{width:100%;padding:12px;margin:8px 0;border:1px solid #dee2e6;border-radius:6px;box-sizing:border-box;font-size:14px}
+    button{cursor:pointer;font-weight:600;transition:0.2s}
+    .btn-primary{background:#007bff;color:#fff;border:none}
+    .btn-secondary{background:#fff;color:#007bff;border:1px solid #007bff}
     .btn-danger{background:#dc3545;color:#fff;border:none}
-    
-    table{width:100%;border-collapse:collapse;font-size:12px;margin-top:10px}
-    th,td{border:1px solid #ddd;padding:6px;text-align:center} th{background:#f8f9fa}
-    .var{color:green;font-weight:bold;cursor:pointer} .yok{color:red;font-weight:bold;cursor:pointer}
-    
-    .upload-box{border:2px dashed #0d6efd;padding:15px;margin:10px 0;background:#f8f9fa;cursor:pointer;color:#555;font-size:0.9em}
-    .manual-box{border-top:1px solid #eee;padding-top:10px;margin-top:10px}
-    
-    @media(max-width:600px){.card{padding:1.5rem} button,input{padding:15px;font-size:16px}}
+    .table-container{overflow-x:auto;margin-top:15px;border:1px solid #ccc}
+    table{width:100%;border-collapse:collapse;font-size:13px;background:white}
+    th,td{border:1px solid #999;padding:12px;text-align:center;vertical-align:middle}
+    th{background:#e9ecef;color:#333;font-weight:bold}
+    .var { background: #d1e7dd !important; color: #0f5132 !important; font-weight: bold; cursor: pointer; }
+    .yok { background: #f8d7da !important; color: #842029 !important; font-weight: bold; cursor: pointer; }
+    .action-btn{background:none;border:none;cursor:pointer;font-size:18px;padding:2px 8px}
+    .upload-box{border:2px dashed #007bff;padding:20px;margin:15px 0;background:#fcfdff;cursor:pointer;color:#444}
+    .date-note{font-size:10px; display:block; color:#666; margin-top:4px;}
+    .info-text{color:#555;font-size:14px;margin:15px 0;}
+    #qr-container{margin:20px auto; width:200px; height:200px;}
 </style>
 </head>
-
 <body>
 
+    <!-- Giriş Ekranı -->
     <div id="login-screen" class="card">
-        <h2>Sistem Girişi</h2>
-        <p style="color:#666;font-size:0.9em">Iğdır Üniversitesi Yoklama</p>
-        
-        <input id="login-no" placeholder="Okul No veya 'admin'">
-        <input id="login-password" type="password" placeholder="No'nun Son 6 Hanesi">
-        
-        <button class="btn-primary" onclick="girisYap()">Giriş Yap</button>
-        <p id="login-error" style="color:red;display:none;margin-top:5px">Hatalı bilgi!</p>
+        <h2>Yoklama Sistemi</h2>
+        <p class="info-text">
+            <b>Öğrenci Girişi:</b><br>
+            Kullanıcı Adı: Öğrenci Numaranız (10 haneli, ör: 2400000000)<br>
+            Şifre: Numaranızın son 6 hanesi (ör: 000000)
+        </p>
+        <input type="text" id="username" placeholder="Öğrenci No (10 hane)" maxlength="10">
+        <input type="password" id="password" placeholder="Şifre (Son 6 hane)">
+        <button class="btn-primary" onclick="ogrenciGiris()">Öğrenci Girişi</button>
+        <hr style="margin:20px 0;">
+        <button class="btn-primary" onclick="ogretmenGiris()">Öğretmen Paneli</button>
     </div>
 
-    <div id="course-select-screen" class="card">
-        <h2 id="admin-welcome" style="color:#0d6efd"></h2>
-        <select id="ders-secimi"></select>
-        <button class="btn-primary" onclick="dersiYonet()">Seçili Dersi Yönet</button>
-        <div style="display:flex;gap:5px;margin-top:10px;border-top:1px solid #eee;padding-top:10px">
-            <input id="yeni-ders" placeholder="Yeni Ders Ekle" style="margin:0">
-            <button class="btn-secondary" onclick="yeniDersEkle()" style="margin:0;width:auto">+</button>
-        </div>
-        <button class="btn-danger" onclick="cikisYap()">Çıkış</button>
-    </div>
-
+    <!-- Öğretmen Paneli -->
     <div id="teacher-panel" class="card">
-        <h2 id="panel-baslik" style="color:#0d6efd"></h2>
-        
-        <div class="upload-box" onclick="document.getElementById('pdf-input').click()">
-            📄 PDF Listesi Yükle
-            <input type="file" id="pdf-input" accept="application/pdf" style="display:none" onchange="pdfYukle(this)">
-        </div>
-        <div id="pdf-status" style="font-size:0.8em;color:green;margin-bottom:5px"></div>
-
-        <div class="manual-box">
-            <div style="display:flex;gap:5px">
-                <input id="man-name" placeholder="Ad Soyad" style="margin:0">
-                <input id="man-no" type="number" placeholder="No" style="margin:0;width:80px">
-            </div>
-            <button class="btn-secondary" onclick="manuelEkle()" style="font-size:12px;padding:5px;width:100%">Manuel Ekle</button>
-        </div>
-
-        <button class="btn-secondary" onclick="gecmisiGoster()">📋 Liste / Geçmiş</button>
-        <button class="btn-primary" onclick="qrBaslat()" style="background:#198754">YOKLAMA BAŞLAT (5 Dk)</button>
-        <button class="btn-danger" onclick="ekranDegistir('course-select-screen')">Geri</button>
+        <h2>Öğretmen Paneli</h2>
+        <select id="ders-secim" onchange="dersSec()">
+            <option value="">Ders Seçin</option>
+        </select>
+        <button class="btn-primary" onclick="yeniDersEkle()">Yeni Ders Ekle</button>
+        <button class="btn-primary" onclick="ogrenciEkle()">Öğrenci Ekle</button>
+        <button class="btn-primary" onclick="yoklamaAl()">Yoklama Al (QR Oluştur)</button>
+        <button class="btn-primary" onclick="gecmisiGoster()">Yoklama Geçmişi</button>
+        <button class="btn-secondary" onclick="ekranDegistir('login-screen')">Çıkış Yap</button>
     </div>
 
-    <div id="qr-screen" class="card">
-        <h2 style="color:red;font-weight:800">YOKLAMA VAKTİ</h2>
-        <div id="qrcode" style="margin:10px auto;display:flex;justify-content:center"></div>
-        <div id="countdown" style="font-size:1.5em;color:#d63384;font-weight:bold;margin-top:10px">05:00</div>
-        <p style="font-size:0.8em;color:#666">Kod güvenlik için 3 saniyede bir yenilenir</p>
-        <button class="btn-danger" onclick="yoklamayiBitir()">Bitir</button>
-    </div>
-
-    <div id="student-screen" class="card">
-        <h2 id="student-welcome"></h2>
-        <p>Lütfen QR Kodu Okutun</p>
-        <div id="reader" style="width:100%"></div>
-        <div id="result-area" style="margin-top:10px;font-weight:bold;color:#198754"></div>
-        <button id="btn-camera" class="btn-primary" onclick="kamerayiAc()">Kamerayı Aç</button>
-        <button class="btn-danger" onclick="cikisYap()">Çıkış</button>
-    </div>
-
-    <div id="history-screen" class="card" style="width:600px">
-        <h2>Yoklama Durumu</h2>
-        <div style="overflow-x:auto"><table id="history-table"></table></div>
+    <!-- Yeni Ders Ekle -->
+    <div id="new-lesson-screen" class="card">
+        <h2>Yeni Ders Ekle</h2>
+        <input type="text" id="new-lesson-name" placeholder="Ders Adı (ör: MAT101)">
+        <button class="btn-primary" onclick="dersKaydet()">Kaydet</button>
         <button class="btn-secondary" onclick="ekranDegistir('teacher-panel')">Geri</button>
     </div>
 
+    <!-- Öğrenci Ekle -->
+    <div id="add-student-screen" class="card">
+        <h2>Öğrenci Ekle</h2>
+        <div class="upload-box" onclick="dosyaSec()">Excel Dosyası Yükle (Toplu)</div>
+        <input type="file" id="student-file" style="display:none" accept=".xlsx" onchange="ogrencileriYukle()">
+        <input type="text" id="student-no" placeholder="Öğrenci No (10 hane)">
+        <input type="text" id="student-name" placeholder="İsim Soyisim">
+        <button class="btn-primary" onclick="tekOgrenciEkle()" id="add-btn">Öğrenciyi Ekle ve Listeye Ekle</button>
+        <button class="btn-secondary" onclick="ekranDegistir('teacher-panel')">Geri</button>
+    </div>
+
+    <!-- Öğretmen QR Oluşurma Ekranı -->
+    <div id="qr-generate-screen" class="card">
+        <h2 id="qr-title"></h2>
+        <p>Öğrenciler bu QR'ı okutarak yoklama verebilir. (Her 4 saniyede yenilenir)</p>
+        <div id="qr-container"></div>
+        <button class="btn-danger" onclick="yoklamayiBitir()">Yoklamayı Bitir</button>
+        <button class="btn-secondary" onclick="ekranDegistir('teacher-panel')">Geri</button>
+    </div>
+
+    <!-- Öğrenci QR Okutma Ekranı -->
+    <div id="student-scan-screen" class="card">
+        <h2>Yoklama İçin QR Okut</h2>
+        <div id="qr-reader" style="width:100%; height:300px; margin-bottom:20px;"></div>
+        <p id="scan-status" style="color:#28a745; font-weight:bold;"></p>
+        <button class="btn-secondary" onclick="ekranDegistir('login-screen')">Çıkış Yap</button>
+    </div>
+
+    <!-- Yoklama Geçmişi -->
+    <div id="history-screen" class="card" style="width:98%; max-width:1400px">
+        <h2 id="history-title"></h2>
+        <div style="display:flex; gap:10px; margin-bottom:15px; justify-content:center; flex-wrap:wrap">
+            <button class="btn-primary" style="background:#198754; border:none" onclick="indirPDF()">PDF İndir</button>
+            <button class="btn-primary" style="background:#ffc107; color:black; border:none" onclick="indirExcel()">Excel İndir</button>
+        </div>
+        <div class="table-container">
+            <table id="history-table"></table>
+        </div>
+        <button class="btn-secondary" onclick="ekranDegistir('teacher-panel')">Geri Dön</button>
+    </div>
+
 <script>
-    // PDF.js Ayarı
-    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+    let secilenDers = "";
+    let html5QrCode;
+    let bugunTarih = new Date().toLocaleDateString('tr-TR', {day:'2-digit', month:'2-digit', year:'numeric'}).replace(/\./g, '-');
+    let qrTimer;
+    let qrCounter = 0;
 
-    let secilenDers="", qrcodeObj, qrInterval, timerInterval, scanner;
-    let yoklamaBitis=0;
-    
-    // DB Başlatma (Hafıza Yoksa Oluştur)
-    if(!localStorage.getItem("studentsDB")) localStorage.setItem("studentsDB","[]");
-    if(!localStorage.getItem("attendanceDB")) localStorage.setItem("attendanceDB","{}");
-    if(!localStorage.getItem("coursesDB")) localStorage.setItem("coursesDB",JSON.stringify(["Matematik","Fizik","Algoritma"]));
-
-    // --- EKRAN DEĞİŞTİRME ---
-    function ekranDegistir(id){
-        document.querySelectorAll(".card").forEach(c=>c.style.display="none");
-        document.getElementById(id).style.display="block";
-        // Kamera temizliği
-        if(scanner){scanner.clear().catch(e=>{}); document.getElementById("reader").style.display="none"; document.getElementById("btn-camera").style.display="block";}
-        document.getElementById("login-error").style.display="none";
+    function veritabaniGetir(key) {
+        return JSON.parse(localStorage.getItem(key)) || {};
     }
 
-    // --- GİRİŞ ---
-    function girisYap(){
-        const u=document.getElementById("login-no").value;
-        const p=document.getElementById("login-password").value;
-        
-        if(u==="admin" && p==="1234"){
-            document.getElementById("admin-welcome").innerText="Hocam Hoşgeldiniz";
-            dersleriDoldur();
-            ekranDegistir("course-select-screen");
+    function veritabaniKaydet(key, data) {
+        localStorage.setItem(key, JSON.stringify(data));
+    }
+
+    function ekranDegistir(ekranId) {
+        document.querySelectorAll('.card').forEach(card => card.style.display = 'none');
+        const target = document.getElementById(ekranId);
+        if (target) target.style.display = 'block';
+    }
+
+    // Öğrenci Girişi
+    function ogrenciGiris() {
+        let username = document.getElementById('username').value.trim();
+        let password = document.getElementById('password').value.trim();
+
+        if (username.length !== 10 || isNaN(username)) return alert('Öğrenci no 10 haneli olmalı!');
+        if (password !== username.slice(-6)) return alert('Şifre numaranızın son 6 hanesi olmalı!');
+
+        ekranDegistir('student-scan-screen');
+        qrOkutBaslat(username);
+    }
+
+    function qrOkutBaslat(ogrNo) {
+        html5QrCode = new Html5Qrcode("qr-reader");
+        html5QrCode.start(
+            { facingMode: "environment" },
+            { fps: 5, qrbox: 250 },
+            (decodedText) => {
+                let [ders, tarih, counter] = decodedText.split('-');
+                if (ders === secilenDers && tarih === bugunTarih) {
+                    let enrollmentsDB = veritabaniGetir('enrollmentsDB');
+                    if (enrollmentsDB[ders]?.includes(ogrNo)) {
+                        let attendanceDB = veritabaniGetir('attendanceDB');
+                        if (!attendanceDB[ders]) attendanceDB[ders] = {};
+                        if (!attendanceDB[ders][tarih]) attendanceDB[ders][tarih] = [];
+                        if (!attendanceDB[ders][tarih].includes(ogrNo)) {
+                            attendanceDB[ders][tarih].push(ogrNo);
+                            veritabaniKaydet('attendanceDB', attendanceDB);
+                            document.getElementById('scan-status').innerText = 'Yoklama verildi! Teşekkürler.';
+                        } else {
+                            document.getElementById('scan-status').innerText = 'Zaten yoklama verdiniz.';
+                        }
+                    } else {
+                        document.getElementById('scan-status').innerText = 'Bu derse kayıtlı değilsiniz.';
+                    }
+                } else {
+                    document.getElementById('scan-status').innerText = 'Geçersiz QR kodu.';
+                }
+            },
+            () => {}
+        ).catch(err => console.log(err));
+    }
+
+    // Öğretmen Girişi
+    function ogretmenGiris() {
+        let sifre = prompt("Öğretmen şifresini girin:");
+        if (sifre === "1234") {
+            ekranDegistir('teacher-panel');
+            dersleriYukle();
         } else {
-            let db=JSON.parse(localStorage.getItem("studentsDB"));
-            let ogr=db.find(s=>s.no==u);
-            if(ogr && ogr.pass==p){
-                localStorage.setItem("aktifOgrenciNo",ogr.no);
-                document.getElementById("student-welcome").innerText="Merhaba, "+ogr.name;
-                ekranDegistir("student-screen");
-            } else document.getElementById("login-error").style.display="block";
+            alert('Yanlış şifre!');
         }
     }
 
-    // --- DERS İŞLEMLERİ ---
-    function dersleriDoldur(){
-        const s=document.getElementById("ders-secimi"); s.innerHTML="";
-        JSON.parse(localStorage.getItem("coursesDB")).forEach(d=>{
-            let o=document.createElement("option"); o.value=d; o.innerText=d; s.appendChild(o);
+    function dersSec() {
+        secilenDers = document.getElementById('ders-secim').value;
+    }
+
+    function dersleriYukle() {
+        let lessonsDB = veritabaniGetir('lessonsDB');
+        let select = document.getElementById('ders-secim');
+        select.innerHTML = '<option value="">Ders Seçin</option>';
+        Object.keys(lessonsDB).forEach(ders => {
+            select.innerHTML += `<option value="${ders}">${ders}</option>`;
         });
     }
-    function yeniDersEkle(){
-        let n=document.getElementById("yeni-ders").value.trim();
-        if(!n) return;
-        let db=JSON.parse(localStorage.getItem("coursesDB"));
-        if(!db.includes(n)) { db.push(n); localStorage.setItem("coursesDB",JSON.stringify(db)); dersleriDoldur(); }
-        document.getElementById("yeni-ders").value="";
-    }
-    function dersiYonet(){
-        secilenDers=document.getElementById("ders-secimi").value;
-        if(!secilenDers) return;
-        document.getElementById("panel-baslik").innerText=secilenDers;
-        ekranDegistir("teacher-panel");
+
+    function yeniDersEkle() {
+        ekranDegistir('new-lesson-screen');
     }
 
-    // --- HOCA: MANUEL EKLEME (ŞİFRE = SON 6 HANE) ---
-    function manuelEkle(){
-        let ad=document.getElementById("man-name").value, no=document.getElementById("man-no").value;
-        if(!ad || !no) return;
-        let db=JSON.parse(localStorage.getItem("studentsDB"));
-        if(!db.some(s=>s.no==no)){
-            // ŞİFRE MANTIĞI: Numaranın son 6 hanesi, yoksa tamamı
-            let pass = no.length>=6 ? no.slice(-6) : no; 
-            db.push({no:no, name:ad, pass:pass});
-            localStorage.setItem("studentsDB",JSON.stringify(db));
-            alert(ad + " eklendi.\nŞifresi: " + pass + " (No'nun son 6 hanesi)");
-        } else { alert("Bu numara zaten kayıtlı!"); }
-        document.getElementById("man-name").value=""; document.getElementById("man-no").value="";
+    function dersKaydet() {
+        let name = document.getElementById('new-lesson-name').value.trim();
+        if (!name) return alert('Ders adı girin!');
+        let lessonsDB = veritabaniGetir('lessonsDB');
+        lessonsDB[name] = true;
+        veritabaniKaydet('lessonsDB', lessonsDB);
+        dersleriYukle();
+        ekranDegistir('teacher-panel');
     }
 
-    // --- PDF YÜKLEME (ŞİFRE = SON 6 HANE) ---
-    async function pdfYukle(input){
-        let file=input.files[0]; if(!file) return;
-        document.getElementById("pdf-status").innerText="Taranıyor...";
-        let reader=new FileReader();
-        reader.onload=async function(e){
-            try{
-                let pdf=await pdfjsLib.getDocument(new Uint8Array(e.target.result)).promise;
-                let txt="";
-                for(let i=1;i<=pdf.numPages;i++) txt+=(await (await pdf.getPage(i)).getTextContent()).items.map(s=>s.str).join(" ");
-                let nums=txt.match(/\b\d{9,11}\b/g);
-                if(nums){
-                    let db=JSON.parse(localStorage.getItem("studentsDB")), c=0;
-                    nums.forEach(n=>{
-                        if(!db.some(s=>s.no==n)){
-                            // PDF İÇİN ŞİFRE MANTIĞI
-                            let pass = n.length>=6 ? n.slice(-6) : n; 
-                            db.push({no:n, name:"Öğrenci "+n, pass:pass}); c++;
-                        }
-                    });
-                    localStorage.setItem("studentsDB",JSON.stringify(db));
-                    document.getElementById("pdf-status").innerText=`✅ ${c} Kişi Eklendi (Şifreler son 6 hane)`;
-                } else document.getElementById("pdf-status").innerText="No bulunamadı.";
-            }catch(err){console.log(err);}
+    function ogrenciEkle() {
+        if (!secilenDers) return alert('Önce ders seçin!');
+        ekranDegistir('add-student-screen');
+    }
+
+    function dosyaSec() {
+        document.getElementById('student-file').click();
+    }
+
+    function ogrencileriYukle() {
+        let file = document.getElementById('student-file').files[0];
+        if (!file) return alert('Dosya seçin!');
+        let reader = new FileReader();
+        reader.onload = function(e) {
+            let data = new Uint8Array(e.target.result);
+            let workbook = XLSX.read(data, {type: 'array'});
+            let sheet = workbook.Sheets[workbook.SheetNames[0]];
+            let rows = XLSX.utils.sheet_to_json(sheet, {header:1});
+            let studentsDB = veritabaniGetir('studentsDB');
+            if (!studentsDB) studentsDB = {};
+            let enrollmentsDB = veritabaniGetir('enrollmentsDB');
+            if (!enrollmentsDB[secilenDers]) enrollmentsDB[secilenDers] = [];
+            let eklenen = 0;
+            rows.forEach(row => {
+                if (row[0] && row[1]) {
+                    let no = row[0].toString().trim();
+                    studentsDB[no] = {name: row[1]};
+                    if (!enrollmentsDB[secilenDers].includes(no)) {
+                        enrollmentsDB[secilenDers].push(no);
+                        eklenen++;
+                    }
+                }
+            });
+            veritabaniKaydet('studentsDB', studentsDB);
+            veritabaniKaydet('enrollmentsDB', enrollmentsDB);
+            alert(`Toplu ekleme başarılı! ${eklenen} öğrenci eklendi.`);
+            ekranDegistir('teacher-panel');
         };
         reader.readAsArrayBuffer(file);
     }
 
-    // --- QR & YOKLAMA YÖNETİMİ ---
-    function qrBaslat(){
-        ekranDegistir("qr-screen");
-        if(!qrcodeObj) qrcodeObj=new QRCode(document.getElementById("qrcode"),{width:200,height:200});
-        yoklamaBitis=Date.now()+5*60*1000; // 5 Dakika
-        updateQR();
-        qrInterval=setInterval(updateQR,3000);
-        timerInterval=setInterval(()=>{
-            let k=yoklamaBitis-Date.now();
-            if(k<=0) yoklamayiBitir();
-            let dk=Math.floor(k/60000), sn=Math.floor((k%60000)/1000);
-            document.getElementById("countdown").innerText=`${dk}:${sn<10?'0'+sn:sn}`;
-        },1000);
+    function tekOgrenciEkle() {
+        document.getElementById('add-btn').innerText = "Ekleniyor...";
+        let no = document.getElementById('student-no').value.trim();
+        let name = document.getElementById('student-name').value.trim();
+        if (no.length !== 10 || isNaN(no)) {
+            document.getElementById('add-btn').innerText = "Öğrenciyi Ekle ve Listeye Ekle";
+            return alert('Öğrenci no 10 haneli olmalı!');
+        }
+        if (!name) {
+            document.getElementById('add-btn').innerText = "Öğrenciyi Ekle ve Listeye Ekle";
+            return alert('İsim girin!');
+        }
+        let studentsDB = veritabaniGetir('studentsDB');
+        if (!studentsDB) studentsDB = {};
+        let enrollmentsDB = veritabaniGetir('enrollmentsDB');
+        if (!enrollmentsDB[secilenDers]) enrollmentsDB[secilenDers] = [];
+        studentsDB[no] = {name: name};
+        if (!enrollmentsDB[secilenDers].includes(no)) {
+            enrollmentsDB[secilenDers].push(no);
+        }
+        veritabaniKaydet('studentsDB', studentsDB);
+        veritabaniKaydet('enrollmentsDB', enrollmentsDB);
+        document.getElementById('add-btn').innerText = "Öğrenciyi Ekle ve Listeye Ekle";
+        alert('Başarılı şekilde öğrenci eklendi!');
+        ekranDegistir('teacher-panel');
     }
-    function updateQR(){ qrcodeObj.clear(); qrcodeObj.makeCode("YOKLAMA|"+secilenDers+"|"+Date.now()); }
-    function yoklamayiBitir(){ clearInterval(qrInterval); clearInterval(timerInterval); ekranDegistir("teacher-panel"); }
 
-    // --- ÖĞRENCİ OKUTMA (ANINDA KAYIT) ---
-    function kamerayiAc(){
-        document.getElementById("reader").style.display="block";
-        document.getElementById("btn-camera").style.display="none";
-        scanner=new Html5QrcodeScanner("reader",{fps:10,qrbox:250});
-        scanner.render(txt=>{
-            if(txt.startsWith("YOKLAMA|")){
-                let p=txt.split("|"), ders=p[1], tarih=new Date().toLocaleDateString("tr-TR");
-                
-                // Anında DB'ye Yazma (Güvenli)
-                let db=JSON.parse(localStorage.getItem("attendanceDB"));
-                if(!db[ders]) db[ders]={}; if(!db[ders][tarih]) db[ders][tarih]=[];
-                
-                let no=localStorage.getItem("aktifOgrenciNo");
-                if(!db[ders][tarih].includes(no)){
-                    db[ders][tarih].push(no);
-                    localStorage.setItem("attendanceDB",JSON.stringify(db)); // Kaydet
-                    document.getElementById("result-area").innerHTML="<span style='color:green'>✅ VAR YAZILDIN (Kaydedildi)</span>";
-                } else document.getElementById("result-area").innerHTML="<span>ℹ️ Zaten listedesin</span>";
-                
-                scanner.clear(); // Okuma bitince kamerayı kapat
-            }
+    // Yoklama Al (QR Oluştur - Her 4 saniyede yenile)
+    function yoklamaAl() {
+        if (!secilenDers) return alert('Ders seçin!');
+        ekranDegistir('qr-generate-screen');
+        document.getElementById('qr-title').innerText = secilenDers + ' - Yoklama QR Kodu';
+        qrOlusturVeYenile();
+        qrTimer = setInterval(qrOlusturVeYenile, 4000);
+    }
+
+    function qrOlusturVeYenile() {
+        qrCounter++;
+        let qrData = `${secilenDers}-${bugunTarih}-${qrCounter}`;
+        document.getElementById('qr-container').innerHTML = "";
+        new QRCode(document.getElementById('qr-container'), {
+            text: qrData,
+            width: 200,
+            height: 200
         });
     }
 
-    // --- LİSTE & GEÇMİŞ ---
-    function gecmisiGoster(){
-        ekranDegistir("history-screen");
-        let t=document.getElementById("history-table"); t.innerHTML="";
-        let db=JSON.parse(localStorage.getItem("attendanceDB"))[secilenDers]||{};
-        let st=JSON.parse(localStorage.getItem("studentsDB"));
-        let dates=Object.keys(db);
-
-        let h="<tr><th>No</th><th>Devam %</th>"; dates.forEach(d=>h+=`<th>${d}</th>`); h+="</tr>";
-        st.forEach(s=>{
-            let g=0; dates.forEach(d=>{if(db[d].includes(s.no))g++});
-            let y=dates.length?Math.round(g/dates.length*100):0;
-            h+=`<tr><td>${s.no}<br>${s.name}</td><td style="color:${y<70?'red':'green'}">%${y}</td>`;
-            dates.forEach(d=>{
-                let v=db[d].includes(s.no);
-                h+=`<td onclick="durumDegistir('${d}','${s.no}')" class="${v?'var':'yok'}">${v?'VAR':'YOK'}</td>`;
-            });
-            h+="</tr>";
-        });
-        t.innerHTML=h;
-    }
-
-    function durumDegistir(d,n){
-        let db=JSON.parse(localStorage.getItem("attendanceDB"));
-        let l=db[secilenDers][d], i=l.indexOf(n);
-        if(i>-1) l.splice(i,1); else l.push(n);
-        localStorage.setItem("attendanceDB",JSON.stringify(db));
+    function yoklamayiBitir() {
+        clearInterval(qrTimer);
+        alert('Yoklama kaydedildi!');
         gecmisiGoster();
     }
-    
-    function cikisYap(){
-        if(qrInterval) clearInterval(qrInterval); if(timerInterval) clearInterval(timerInterval);
-        ekranDegistir("login-screen");
-        document.getElementById("login-no").value=""; document.getElementById("login-password").value="";
+
+    function gecmisiGoster() {
+        if (!secilenDers) return alert('Ders seçin!');
+        ekranDegistir('history-screen');
+        document.getElementById('history-title').innerText = secilenDers + ' - Yoklama Tablosu';
+        tabloyuCiz();
+    }
+
+    function tabloyuCiz() {
+        let table = document.getElementById('history-table');
+        table.innerHTML = '';
+        let eDB = (veritabaniGetir('enrollmentsDB')[secilenDers] || []);
+        let aDB = (veritabaniGetir('attendanceDB')[secilenDers] || {});
+        let sDB = veritabaniGetir('studentsDB');
+        let dates = Object.keys(aDB).sort();
+        if (eDB.length === 0) {
+            table.innerHTML = `<tr><td colspan="10" style="padding:50px;color:#888">Bu derse öğrenci eklenmemiş.</td></tr>`;
+            return;
+        }
+        if (dates.length === 0) {
+            table.innerHTML = `<tr><td colspan="10" style="padding:50px;color:#888">Henüz yoklama alınmamış.</td></tr>`;
+            return;
+        }
+        let html = `<thead><tr><th>Öğrenci Adı</th><th>Öğrenci No</th><th>İşlem</th>`;
+        dates.forEach(d => html += `<th>${d}<br><small>Gün-Ay-Yıl</small></th>`);
+        html += `</tr></thead><tbody>`;
+        eDB.forEach(no => {
+            let ogr = sDB[no] || {name: 'İsim Yok'};
+            html += `<tr><td style="text-align:left;padding-left:15px;">${ogr.name}</td><td><b>${no}</b></td>`;
+            html += `<td><button class="action-btn" onclick="isimDuzenle('${no}')">✏️</button> <button class="action-btn" onclick="ogrenciSil('${no}')">🗑️</button></td>`;
+            dates.forEach(d => {
+                let varmi = aDB[d]?.includes(no) || false;
+                html += `<td class="${varmi ? 'var' : 'yok'}" onclick="durumDegistir('${d}','${no}')">${varmi ? 'VAR' : 'YOK'}</td>`;
+            });
+            html += `</tr>`;
+        });
+        html += `</tbody>`;
+        table.innerHTML = html;
+    }
+
+    function isimDuzenle(no) {
+        let yeni = prompt('Yeni isim:', (veritabaniGetir('studentsDB')[no]?.name || ''));
+        if (yeni) {
+            let db = veritabaniGetir('studentsDB');
+            db[no] = {name: yeni};
+            veritabaniKaydet('studentsDB', db);
+            tabloyuCiz();
+        }
+    }
+
+    function ogrenciSil(no) {
+        if (confirm('Öğrenciyi silmek istiyor musunuz?')) {
+            let db = veritabaniGetir('enrollmentsDB');
+            db[secilenDers] = db[secilenDers].filter(x => x !== no);
+            veritabaniKaydet('enrollmentsDB', db);
+            tabloyuCiz();
+        }
+    }
+
+    function durumDegistir(tarih, no) {
+        let db = veritabaniGetir('attendanceDB');
+        let liste = db[secilenDers][tarih] || [];
+        if (liste.includes(no)) {
+            liste = liste.filter(x => x !== no);
+        } else {
+            liste.push(no);
+        }
+        db[secilenDers][tarih] = liste;
+        veritabaniKaydet('attendanceDB', db);
+        tabloyuCiz();
+    }
+
+    function indirPDF() {
+        const { jsPDF } = window.jspdf;
+        let doc = new jsPDF();
+        doc.autoTable({ html: document.getElementById('history-table') });
+        doc.save((secilenDers || 'yoklama') + '.pdf');
+    }
+
+    function indirExcel() {
+        let wb = XLSX.utils.table_to_book(document.getElementById('history-table'));
+        XLSX.writeFile(wb, (secilenDers || 'yoklama') + '.xlsx');
     }
 </script>
 </body>
