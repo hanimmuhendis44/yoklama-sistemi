@@ -1,51 +1,71 @@
-body { font-family: 'Segoe UI', sans-serif; background-color: #f4f6f8; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-.card { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 8px 20px rgba(0,0,0,0.1); width: 380px; }
-input[type="text"], input[type="password"], select { width: 100%; padding: 12px; margin: 8px 0 20px 0; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; }
-label { font-weight: 600; color: #444; font-size: 0.9rem; }
-.btn-primary { width: 100%; padding: 12px; background-color: #007bff; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 1rem; }
-.btn-success { width: 100%; padding: 15px; background-color: #28a745; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 1.1rem; font-weight: bold; margin-top: 20px; transition: 0.3s; }
-.btn-success:hover { background-color: #218838; }
-.radio-group { display: flex; gap: 10px; margin-top: 5px; }
-.radio-group input[type="radio"] { display: none; }
-.radio-box { flex: 1; text-align: center; padding: 10px; background: #f8f9fa; border: 1px solid #ddd; border-radius: 6px; cursor: pointer; font-weight: normal; }
-.radio-group input:checked + .radio-box { background: #e7f1ff; border-color: #007bff; color: #007bff; font-weight: bold; }
-.header { display: flex; justify-content: space-between; align-items: center; }
-.logout-btn { background: none; border: 1px solid #dc3545; color: #dc3545; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 0.8rem; }
-.logout-btn:hover { background: #dc3545; color: white; }
-.footer { margin-top: 25px; text-align: center; font-size: 0.9rem; border-top: 1px solid #eee; padding-top: 15px; }
-.footer a { color: #6c757d; text-decoration: none; margin: 0 10px; }
-.footer a:hover { color: #007bff; }
-/* --- YENİ EKLENEN: ÜYE OL BUTONU STİLİ --- */
-.btn-secondary {
-    display: block; /* Buton gibi davranmasını sağlar */
-    width: 100%;
-    padding: 12px;
-    background-color: #6c757d; /* Gri renk */
-    color: white;
-    text-align: center;
-    border-radius: 6px;
-    text-decoration: none; /* Alt çizgiyi kaldırır */
-    box-sizing: border-box;
-    font-weight: bold;
-    transition: 0.3s;
+:root {
+    --primary: #207ab7; --secondary: #34495e; --bg-color: #f4f7f6;
+    --success: #27ae60; --danger: #e74c3c; --warning: #f39c12;
 }
-.btn-secondary:hover {
-    background-color: #5a6268; /* Üstüne gelince koyulaşır */
-}
-/* --- ÜYE OL BUTONU İÇİN GRİ STİL --- */
-.btn-secondary {
-    display: block;
-    width: 100%;
-    padding: 12px;
-    background-color: #6c757d; /* Gri renk */
-    color: white;
-    text-align: center;
-    border-radius: 6px;
-    text-decoration: none;
-    box-sizing: border-box;
-    font-weight: bold;
-    transition: 0.3s;
-}
-.btn-secondary:hover {
-    background-color: #5a6268;
-}
+
+body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: var(--bg-color); margin: 0; padding: 0; }
+
+/* --- GİRİŞ VE ROL SEÇİM EKRANI --- */
+#auth-section { display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px;}
+.auth-card { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 400px; text-align: center; border-top: 5px solid var(--primary); animation: fadeIn 0.3s; }
+.auth-card h2 { color: var(--secondary); margin-bottom: 10px; }
+.auth-card p { color: #7f8c8d; margin-bottom: 25px; font-weight: 500;}
+.auth-card input { width: 100%; padding: 12px; margin-bottom: 15px; border: 2px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 15px; outline: none; text-transform: uppercase; transition: 0.3s;}
+.auth-card input[type="password"] { text-transform: none; } /* Şifrede büyük harf zorunluluğu kalkar */
+.auth-card input::placeholder { color: #aab7c4; font-weight: normal; }
+.auth-card input:focus { border-color: var(--primary); }
+.auth-switch { color: var(--primary); cursor: pointer; font-size: 14px; font-weight: bold; margin-top: 15px; display: inline-block; }
+
+/* Şifre Göz İkonu İçin Özel Yapı */
+.password-container { position: relative; margin-bottom: 15px; }
+.password-container input { margin-bottom: 0 !important; padding-right: 40px; }
+.toggle-password { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); cursor: pointer; font-size: 18px; user-select: none; opacity: 0.7; transition: 0.2s; }
+.toggle-password:hover { opacity: 1; }
+
+/* --- ANA UYGULAMA (GİZLİ BAŞLAR) --- */
+#app-section { display: none; }
+
+/* Navigasyon Barı */
+.top-nav { background-color: var(--secondary); display: flex; align-items: center; padding: 0 20px; position: sticky; top: 0; z-index: 1000; height: 60px; gap: 15px; }
+.brand-title { color: white; font-size: 20px; font-weight: bold; margin-right: auto; }
+.nav-btn { padding: 8px 15px; border: none; border-radius: 5px; background: rgba(255,255,255,0.1); color: white; cursor: pointer; font-weight: bold; transition: 0.2s; }
+.nav-btn.active { background: var(--primary); }
+
+/* Ders Sekmeleri */
+.course-tabs-container { background: white; padding: 10px 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); display: flex; gap: 10px; overflow-x: auto; align-items: center;}
+.course-tab { padding: 8px 20px; background: #eee; border: none; border-radius: 20px; font-weight: bold; cursor: pointer; color: #555; transition: 0.3s; white-space: nowrap;}
+.course-tab.active { background: var(--primary); color: white; }
+.btn-add-course { background: var(--success); color: white; border: none; padding: 8px 15px; border-radius: 20px; cursor: pointer; font-weight: bold; }
+
+/* Paneller */
+.main-container { max-width: 1050px; margin: 20px auto; padding: 0 15px; }
+.panel { display: none; background: white; padding: 25px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+.panel.active { display: block; animation: fadeIn 0.3s; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+/* Form ve Butonlar */
+h2.panel-title { margin-top: 0; color: #2c3e50; border-bottom: 2px solid #eee; padding-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+.input-group { display: flex; gap: 15px; margin-bottom: 20px; }
+.input-group input { flex: 1; padding: 12px; border: 2px solid #e0e0e0; border-radius: 6px; font-size: 15px; outline: none; text-transform: uppercase;}
+.input-group input:focus { border-color: var(--primary); }
+.action-bar { display: flex; gap: 10px; margin-bottom: 25px; flex-wrap: wrap; }
+.btn { padding: 12px 18px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.2s; color: white;}
+.btn:hover { filter: brightness(0.95); transform: scale(0.98); }
+.btn-success { background: var(--success); } .btn-danger { background: var(--danger); } .btn-warning { background: var(--warning); color: #fff; } .btn-primary { background: var(--primary); } .btn-secondary { background: var(--secondary); }
+
+/* Tablo */
+table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+th, td { padding: 12px; border: 1px solid #eee; text-align: left; }
+th { background: var(--primary); color: white; }
+tr:hover { background-color: #f9f9f9; cursor: pointer; }
+tr.selected { background-color: #e3f2fd !important; border-left: 4px solid var(--primary); }
+
+.badge { padding: 6px 12px; border-radius: 5px; font-size: 12px; font-weight: bold; text-align: center; display: inline-block; min-width: 45px; cursor: pointer; user-select: none; transition: 0.2s; }
+.badge:active { transform: scale(0.9); }
+.badge-var { background: var(--success); color: white; }
+.badge-yok { background: var(--danger); color: white; }
+
+/* QR, Sayaç ve Kamera Alanı */
+#progress-bar { transition: width 3s linear; }
+.timer-display { font-size: 24px; font-weight: bold; color: var(--danger); margin-top: 15px; background: #fff1f0; padding: 10px 20px; border-radius: 8px; border: 1px solid #ffccc7;}
+#student-reader { border-radius: 10px; overflow: hidden; margin-top: 15px; border: 3px solid var(--primary); display: none; }

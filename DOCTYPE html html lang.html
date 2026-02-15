@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Öğrenci Yoklama Ekranı</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: #f0f2f5; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .login-card { width: 90%; max-width: 400px; padding: 30px; background: white; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); border-top: 5px solid #207ab7;}
+        h2 { text-align: center; color: #207ab7; margin-top: 0; }
+        p { text-align: center; color: #7f8c8d; margin-bottom: 25px; font-weight: bold;}
+        .info-box { background: #e3f2fd; color: #207ab7; padding: 10px; border-radius: 8px; text-align: center; margin-bottom: 20px; font-weight: bold; border: 1px solid #b3d4fc;}
+        input { width: 100%; padding: 15px; margin-bottom: 15px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px; box-sizing: border-box; text-transform: uppercase; outline: none; transition: 0.3s;}
+        input:focus { border-color: #207ab7; box-shadow: 0 0 5px rgba(32, 122, 183, 0.3);}
+        .btn { width: 100%; padding: 15px; background: #27ae60; color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 16px; cursor: pointer; transition: 0.2s; }
+        .btn:hover { background: #219653; transform: scale(0.98);}
+        #message { margin-top: 20px; text-align: center; font-weight: bold; font-size: 15px; }
+    </style>
+</head>
+<body>
+
+<div class="login-card">
+    <h2>👨‍🎓 Iğdır Üniversitesi</h2>
+    <p>Ders Yoklama Sistemi</p>
+    
+    <div class="info-box" id="dersBilgisi">Ders Bekleniyor...</div>
+    
+    <input type="text" id="stAd" placeholder="ÖRN: SİNEM KILIÇ" autocomplete="off" oninput="this.value = this.value.toUpperCase()">
+    <input type="text" id="stNo" placeholder="ÖRN: 2400000000" maxlength="10" autocomplete="off" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+    
+    <button class="btn" onclick="yoklamaBildir()">✅ BURADAYIM</button>
+    <div id="message"></div>
+</div>
+
+<script>
+    // QR koddan gelen ders adını url'den alıp ekrana yazdıralım
+    const urlParams = new URLSearchParams(window.location.search);
+    const dersAdi = urlParams.get('ders');
+    const tarih = urlParams.get('tarih');
+    
+    if(dersAdi && tarih) {
+        document.getElementById('dersBilgisi').innerText = `${dersAdi} - ${tarih}`;
+    }
+
+    function yoklamaBildir() {
+        const ad = document.getElementById('stAd').value.trim();
+        const no = document.getElementById('stNo').value.trim();
+        const msg = document.getElementById('message');
+
+        if (ad.length > 2 && no.length === 10) {
+            msg.style.color = "#27ae60";
+            msg.innerText = "✅ Başarılı! Yoklamanız sisteme iletildi.";
+            // Gerçekte burada Django backend'e (fetch ile) istek atılır
+        } else {
+            msg.style.color = "#e74c3c";
+            msg.innerText = "⚠️ Lütfen Ad Soyad ve 10 haneli Okul Numaranızı tam girin!";
+        }
+    }
+</script>
+
+</body>
+</html>

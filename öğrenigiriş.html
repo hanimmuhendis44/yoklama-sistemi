@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Öğrenci Yoklama Girişi</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .login-container { max-width: 400px; margin: 50px auto; padding: 25px; background: white; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        input { width: 100%; padding: 15px; margin-bottom: 15px; border: 2px solid #ddd; border-radius: 10px; font-size: 16px; box-sizing: border-box; }
+        .btn-submit { width: 100%; padding: 15px; background: #27ae60; color: white; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; }
+    </style>
+</head>
+<body style="background: #f4f7f6;">
+    <div class="login-container">
+        <h2 style="text-align: center; color: #2c3e50;">👨‍🎓 Yoklama Girişi</h2>
+        <p style="text-align: center; color: #7f8c8d;">Iğdır Üniversitesi</p>
+        
+        <input type="text" id="stAd" placeholder="AD SOYAD (TAMAMI BÜYÜK)" oninput="this.value = this.value.toUpperCase()" autocomplete="off">
+        <input type="text" id="stNo" placeholder="10 HANELİ OKUL NO" maxlength="10" autocomplete="off">
+        
+        <button class="btn-submit" onclick="yoklamaGonder()">✅ YOKLAMAYI ONAYLA</button>
+        <div id="result" style="margin-top: 20px; text-align: center; font-weight: bold;"></div>
+    </div>
+
+    <script>
+        function yoklamaGonder() {
+            const ad = document.getElementById('stAd').value.trim();
+            const no = document.getElementById('stNo').value.trim();
+            const result = document.getElementById('result');
+
+            if (ad && no.length === 10) {
+                // Burada backend (Django) bağlantısı yapılacak. 
+                // Şimdilik simülasyon olarak başarılı mesajı veriyoruz.
+                result.style.color = "#27ae60";
+                result.innerText = "✅ Bilgileriniz iletildi. Yoklamanız işleniyor...";
+            } else {
+                result.style.color = "#e74c3c";
+                result.innerText = "⚠️ Lütfen bilgilerinizi eksiksiz girin!";
+            }
+        }
+    </script>
+</body>
+</html>
